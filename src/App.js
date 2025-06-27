@@ -5,18 +5,22 @@ export default function App() {
   const [input, setInput] = useState("");
   const [result, setResult] = useState([]);
   const [showResults, setShowResults] = useState(false);
-  // const fetchData = async () => {
-  //   const data = await fetch("https://dummyjson.com/recipes/search?q=" + input);
-  //   const json = await data.json();
-  //   setResult(json?.recipes);
-  // };
+  const [cache, setCache] = useState({});
   useEffect(() => {
+    //Applying Memoization technique 
+    if (cache[input]) {
+      console.log("Returned cache : " + input);
+      setResult(cache[input]);
+      return;
+    }
     const timer = setTimeout(() => {
       console.log("API call : " + input);
       const fetchData = async () => {
         const data = await fetch("https://dummyjson.com/recipes/search?q=" + input);
         const json = await data.json();
         setResult(json?.recipes);
+        //Setting the cache value
+        setCache((prev) => ({ ...prev, [input]: json?.recipes }));
       };
       fetchData();
     }, 300);
